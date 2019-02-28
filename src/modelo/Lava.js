@@ -1,16 +1,16 @@
 function Lava(position, lavaType) {
     // Call constructor of the superclass
     Actor.call(this, position.add(new Vector(-0.1,0)), new Vector(1,1), new Vector(0,0), 'lava');
+    this.respawnPosition = new Vector(this.position.x, this.position.y);
     switch (lavaType) {
         case '=':
-            this.speed = new Vector(2,0);
+            this.speed = new Vector(1,0);
             break;
         case '|':
-            this.speed = new Vector(0,2);
+            this.speed = new Vector(0,1);
             break;        
         case 'v':
-            this.speed = new Vector(0,0.08);
-            this.respawnPosition = new Vector(this.position.x, this.position.y);
+            this.speed = new Vector(0,0.05);
             break;
     }
 }
@@ -18,10 +18,9 @@ function Lava(position, lavaType) {
 Lava.prototype = Object.create(Actor.prototype);
 Lava.prototype.constructor = Lava;
 
-Lava.prototype.update = function() {
-    this.position = this.position.add(this.speed);
-    if (this.position.y >= 15.1) {
-        this.position = new Vector(this.respawnPosition.x, this.respawnPosition.y);
+Lava.prototype.update = function(step) {
+    Actor.prototype.update.call(this,step);
+    if (this.position.y >= 15) { 
+        this.position = this.respawnPosition.clone();
     }
 }
-

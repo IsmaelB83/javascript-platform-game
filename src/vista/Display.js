@@ -1,22 +1,11 @@
 const SCALE = 20;
 
 // Inicializa el display gráfico del juego
-function Display(parent, grid) {
+function DOMDisplay(parent, grid) {
+    // Contenedor y capa de actores
     this.wrap = parent.appendChild(this.createElement('div','game'));
-    this.wrap.appendChild(this.renderLevel(grid));
     this.actorsLayer = null;
-}
-
-// Renderiza un frame del juego
-Display.prototype.render = function(actors) {
-    if (this.actorsLayer) {
-        this.wrap.removeChild(this.actorsLayer);
-    }
-    this.actorsLayer = this.wrap.appendChild(this.renderActors(actors));
-}
-
-// Renderizado del fondo estático
-Display.prototype.renderLevel = function(grid) {
+    // Background fijo
     let auxTable = this.createElement('table', 'background');
     auxTable.style.width = grid[0].length * SCALE + 'px';
     for (let y = 0; y < grid.length; y++) {
@@ -27,11 +16,14 @@ Display.prototype.renderLevel = function(grid) {
         }
         auxTable.appendChild(rowTable);
     }
-    return auxTable;
+    this.wrap.appendChild(auxTable);
 }
 
 // Renderizado de los actores dinámicos del juego
-Display.prototype.renderActors = function(actors) {
+DOMDisplay.prototype.renderActors = function(actors) {
+    // Borro la capa de actores si existe
+    if (this.actorsLayer) this.wrap.removeChild(this.actorsLayer);
+    // La creo de nuevo
     let actorsWrap = this.createElement('div');
     for (let i = 0; i < actors.length; i++) {
         const actor = actors[i];
@@ -42,17 +34,17 @@ Display.prototype.renderActors = function(actors) {
         actorDiv.style.top = actor.position.y * SCALE + 'px';
         actorsWrap.appendChild(actorDiv);
     }
-    return actorsWrap;
+    this.actorsLayer = this.wrap.appendChild(actorsWrap);
 }
 
 // Elimina el wrap del HTML
-Display.prototype.clear = function() {
+DOMDisplay.prototype.clear = function() {
     this.wrap.parentNode.removeChild(this.wrap);
     this.wrap = this.actorsLayer = null;    
 } 
 
 // Función auxiliar para crear un elemento HTML con clase CSS asociada
-Display.prototype.createElement = function (htmlType, cssClass) {
+DOMDisplay.prototype.createElement = function (htmlType, cssClass) {
     let element = document.createElement(htmlType);
     if (cssClass) element.className = cssClass;
     return element;

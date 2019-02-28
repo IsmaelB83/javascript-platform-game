@@ -5,6 +5,8 @@ function Actor(position, size, speed, type) {
     this.type = type;
 }
 
-Actor.prototype.update = function() {
-    this.position = this.position.add(this.speed);
+Actor.prototype.update = function(step) {        
+    if (this.speed.x !==0 || this.speed.y !== 0) {
+        this.position.add(this.speed);
+    }
 }

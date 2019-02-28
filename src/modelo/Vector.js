@@ -9,6 +9,12 @@ Vector.prototype.add = function(other) {
     return this;
 }
 
-Vector.prototype.colision = function(other) {
-    
+Vector.prototype.times = function(step) {
+    this.x *= step;
+    this.y *= step;
+    return this;
+}
+
+Vector.prototype.clone = function() {
+    return new Vector(this.x, this.y);
 }
