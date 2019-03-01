@@ -10,9 +10,10 @@ Vector.prototype.add = function(other) {
 }
 
 Vector.prototype.times = function(step) {
-    this.x *= step;
-    this.y *= step;
-    return this;
+    let vector = this.clone();
+    vector.x *= step;
+    vector.y *= step;
+    return vector;
 }
 
 Vector.prototype.clone = function() {

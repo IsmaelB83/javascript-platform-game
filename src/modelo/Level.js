@@ -40,7 +40,11 @@ function Level(numLevel) {
 Level.prototype.update = function(step, keys) {
     while (step > 0) {
         let current = Math.min(step, MAX_STEP);
-        this.actors.forEach(actor => actor.update(current, keys));
+        this.actors.forEach(actor => {
+            if (actor.type === 'player') actor.update(current, keys, this);
+            else if (actor.type === 'lava') actor.update(current, this);
+            else actor.update(current);
+        });
         step -= current;
     }
 }
@@ -63,10 +67,32 @@ Level.prototype.validateLevel = function(map) {
 Level.prototype.collisionCheck = function(position, size) {
     let xStart, xEnd, yStart, yEnd;
     xStart = Math.floor(position.x);
-    xEnd = Math.ceil(position.x);
+    xEnd = Math.ceil(position.x + size.x);
     yStart = Math.floor(position.y);
-    yEnd = Math.ceil(position.y);
+    yEnd = Math.ceil(position.y + size.y);
 
     if (xStart < 0 || xEnd > this.width || yStart < 0 ) return 'wall';
     if (yEnd > this.heigth) return 'wall';
+
+    for (let y = yStart; y < yEnd; y++) {
+        for (let x = xStart; x < xEnd; x++) {
+            let fieldType = this.grid[y][x];
+            if (fieldType) return fieldType;
+        }
+    }
+}
+
+Level.prototype.actorTouched = function (actor) {
+    if (actor.type === 'lava' && this.status === false) {
+        this.status = 'lost';
+        this.finishDelay = 1;
+        return 'lost';
+    } else if (actor.type === 'coin') {
+        this.actors = this.actors.filter(otherActor => otherActor !== actor);
+        if (!this.actors.some(actor => actor.type === 'coin')) {
+            this.status = 'won';
+            this.finishDelay = 2;
+            return 'won';
+        }
+    }
 }
